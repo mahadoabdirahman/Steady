@@ -1,7 +1,4 @@
 # Steady
-<p align="center">
-  <img src="icon/steady-icon-512.png" width="120" alt="Steady app icon: a sprout growing from three stepping stones">
-</p>
 
 <h1 align="center">Steady</h1>
 
