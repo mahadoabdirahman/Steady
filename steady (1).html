@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Steady: learn one small step at a time</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f6;--card:#fff;--ink:#1f2d3a;--mute:#52636f;--line:#cfdbe3;--pri:#2f6f8f;--priink:#fff;--ok:#2f7d4f;--okbg:#e3f2e8;--hm:#8a5a12;--hmbg:#fbf0d9;
+--c1:#2f6f8f;--c2:#4c8a5a;--c3:#8a5aa8;--c4:#b0683a;
+--fs:1.125rem;--font:'Lexend',system-ui,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141f28;--card:#1d2b36;--ink:#e8eff4;--mute:#a3b4c0;--line:#33454f;--pri:#7fc0de;--priink:#0d1a22;--ok:#7fd3a0;--okbg:#1c3a2a;--hm:#f0c677;--hmbg:#3b2f16;--c1:#7fc0de;--c2:#8ccf99;--c3:#c9a0e3;--c4:#e8a574}}
+:root[data-theme="dark"]{--bg:#141f28;--card:#1d2b36;--ink:#e8eff4;--mute:#a3b4c0;--line:#33454f;--pri:#7fc0de;--priink:#0d1a22;--ok:#7fd3a0;--okbg:#1c3a2a;--hm:#f0c677;--hmbg:#3b2f16;--c1:#7fc0de;--c2:#8ccf99;--c3:#c9a0e3;--c4:#e8a574}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:linear-gradient(180deg,color-mix(in srgb,var(--pri) 12%,var(--bg)),var(--bg) 320px) no-repeat var(--bg);color:var(--ink);font-family:var(--font);font-size:var(--fs);line-height:1.6;min-height:100vh;--sh:0 2px 4px rgba(0,0,0,.04),0 12px 28px rgba(0,0,0,.07)}
+body.atk{--font:'Atkinson Hyperlegible',system-ui,sans-serif}
+body.calm *{transition:none!important;animation:none!important}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand h1{white-space:nowrap}
+.stack{display:grid;gap:10px;margin-top:8px}.stack .btn{width:100%}
+.opt.sel{border-color:var(--pri);background:color-mix(in srgb,var(--pri) 12%,var(--card))}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--pri);color:var(--priink);display:grid;place-items:center;flex:none}
+h1{font-size:1.4em;line-height:1.1;margin:0;font-weight:600;cursor:pointer}
+#hi{font-size:.8em;margin-top:2px;line-height:1.2}
+nav{display:flex;gap:2px}
+.nb{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;padding:8px 6px;border:0;border-radius:14px;background:transparent;font-size:.76rem;font-weight:600;color:var(--mute)}
+.nb:hover{background:var(--card);color:var(--ink)}
+h2{font-size:1.4em;line-height:1.3;margin:0 0 8px;font-weight:600}
+p{margin:0 0 12px;max-width:62ch}
+.mute{color:var(--mute)}
+label{font-weight:600;font-size:.95em}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--pri);color:var(--priink);border:2px solid var(--pri);border-radius:999px;padding:12px 26px;min-height:52px;font-weight:600;box-shadow:0 4px 12px color-mix(in srgb,var(--pri) 28%,transparent);transition:transform .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.ghost{background:var(--card);color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn:disabled{opacity:.45;box-shadow:none;cursor:default}
+.wide{width:100%}
+:focus-visible{outline:3px solid var(--pri);outline-offset:3px}
+.grade{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px 10px 18px;margin:16px 0;box-shadow:var(--sh)}
+select{font:inherit;font-weight:600;min-width:150px;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.subjects{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
+.subj{display:flex;flex-direction:column;align-items:flex-start;gap:12px;text-align:start;border:0;border-radius:22px;padding:18px;min-height:150px;background:color-mix(in srgb,var(--col) 14%,var(--card));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--col) 28%,transparent);transition:transform .15s}
+.subj:hover{transform:translateY(-2px)}
+.subj b{display:block;font-size:1.05em;line-height:1.25}
+.subj .mute{display:block;font-size:.85em;line-height:1.35;margin-top:2px}
+.ico{width:52px;height:52px;border-radius:16px;background:var(--card);display:grid;place-items:center;font-size:1.6rem;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;margin-top:8px;box-shadow:var(--sh)}
+.scan{background:var(--pri);color:var(--priink);border-color:var(--pri)}
+.scan h2,.scan p{color:inherit}.scan .small{opacity:.85;margin:12px 0 0}
+.scan .btn{background:var(--card);color:var(--ink);border-color:var(--card);box-shadow:none;cursor:pointer}
+.small{font-size:.85em}
+.tag{display:inline-block;padding:4px 14px;border-radius:999px;background:color-mix(in srgb,var(--col) 16%,transparent);border:1.5px solid color-mix(in srgb,var(--col) 40%,transparent);font-size:.85em;font-weight:600}
+.bar{display:flex;gap:6px;margin:16px 0 24px}
+.bar i{flex:1;height:10px;border-radius:5px;background:var(--line)}
+.bar i.on{background:var(--col,var(--pri))}.bar i.cur{background:var(--col,var(--pri));opacity:.45}
+.opts{display:grid;gap:10px;margin:16px 0}
+.opt{display:block;width:100%;text-align:start;background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:14px 18px;min-height:56px;font-weight:500;transition:border-color .15s}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt.right{background:var(--okbg);border-color:var(--ok)}
+.opt.try{background:var(--hmbg);border-color:var(--hm)}
+.fb{padding:12px 16px;border-radius:14px;margin-bottom:12px}
+.fb.ok{background:var(--okbg)}.fb.hm{background:var(--hmbg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:20px}
+.viz{display:flex;gap:4px;margin:12px 0;max-width:360px}
+.viz span{flex:1;height:44px;border-radius:8px;border:2px solid var(--col);background:var(--card)}
+.viz span.f{background:var(--col)}
+.big{font-size:2.6em;text-align:center;margin:8px 0}
+.nudge{background:var(--hmbg);border-radius:14px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.set label{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set label:nth-last-child(2){border:0}
+input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:none;width:52px;height:30px;margin:0;border-radius:15px;background:var(--line);position:relative;cursor:pointer;transition:background .2s}
+input[type=checkbox]:before{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+input[type=checkbox]:checked{background:var(--pri)}
+input[type=checkbox]:checked:before{transform:translateX(22px)}
+.txt{flex:1;min-width:0;width:100%;font:inherit;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:12px 16px;min-height:52px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg);border-radius:999px;padding:4px;margin:12px 0 20px}
+.seg button{border:0;background:transparent;border-radius:999px;min-height:46px;font-weight:600;color:var(--mute)}
+.seg .on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+#err{color:var(--hm);margin:12px 0 0}
+.break{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:9}
+.break.show{display:flex}
+.orb{width:140px;height:140px;border-radius:50%;background:var(--pri);opacity:.6;margin:28px;animation:br 8s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.6)}50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.orb{animation:none}.btn,.subj{transition:none}}
+@media (max-width:380px){.nb{min-width:50px}.subj{padding:14px}}
+.sm{padding:8px 16px;min-height:44px;font-size:.9em}
+.presets{padding:6px 0 10px;border-bottom:1px solid var(--line)}
+.steps{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
+.steps li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--bg);border-inline-start:8px solid var(--col)}
+.steps li.cur{outline:2px solid var(--col)}.steps li.d .go{text-decoration:line-through;opacity:.6}
+.chk{width:34px;height:34px;flex:none;border-radius:10px;border:2px solid var(--ink);background:var(--card);font-weight:700}
+.lb{font-size:.8em;font-weight:700;min-width:52px;color:var(--mute)}
+.go{background:none;border:0;font-weight:700;text-align:start;flex:1;padding:6px 0}
+.x{margin-inline-start:auto;border:0;background:none;font-size:1.5em;min-width:40px;min-height:40px}
+.add{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.resume{border-inline-start:8px solid var(--pri)}
+ul.plain{margin:0 0 12px;padding-inline-start:20px}
+body.atk{letter-spacing:.03em;word-spacing:.12em;line-height:1.8}
+:root[data-theme="hc"]{--bg:#000;--card:#000;--ink:#fff;--mute:#e8e8e8;--line:#fff;--pri:#ffd600;--priink:#000;--ok:#7dff9b;--okbg:#00260f;--hm:#ffd070;--hmbg:#2a1d00;--c1:#7fd0ff;--c2:#7dff9b;--c3:#e6b3ff;--c4:#ffb36b}
+:root[data-theme="hc"] body{background:#000}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><span class="logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2-5-6-5 0 3 2 5 6 5z"/></svg></span><div><h1 id="title">Steady</h1><div id="hi" class="mute" hidden></div></div></div>
+  <nav aria-label="App menu">
+    <button class="nb" id="hmb" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></button>
+    <button class="nb" id="brk" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg><span>Break</span></button>
+    <button class="nb" id="gear" aria-expanded="false" aria-controls="set"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Settings</span></button>
+  </nav>
+</header>
+
+<section id="set" class="panel set" hidden aria-label="Settings">
+  <div class="presets"><b>Quick setups</b><div class="row" style="justify-content:flex-start;margin:8px 0 4px"><button class="btn ghost sm" data-p="calm">Calm</button><button class="btn ghost sm" data-p="hc">High contrast</button><button class="btn ghost sm" data-p="dys">Dyslexia-friendly</button><button class="btn ghost sm" data-p="reset">Reset</button></div></div>
+  <label for="sLang"><span>Language</span><select id="sLang"></select></label>
+  <label>Text size <select id="sSize"><option value="1">Medium</option><option value="1.25">Large</option><option value="1.5">Extra large</option></select></label>
+  <label>Font <select id="sFont"><option value="lex">Lexend</option><option value="atk">Atkinson Hyperlegible</option></select></label>
+  <label>Colors <select id="sTheme"><option value="auto">Match my device</option><option value="light">Light</option><option value="dark">Dark</option><option value="hc">High contrast</option></select></label>
+  <label>Stop all movement <input type="checkbox" id="sCalm"></label>
+  <label>Show read aloud button <input type="checkbox" id="sTts"></label>
+  <label>Suggest a break every 10 minutes <input type="checkbox" id="sNudge" checked></label>
+  <label><span>Use Claude for lessons, translation and homework photos</span><input type="checkbox" id="sAI" checked></label>
+  <div class="row"><button class="btn ghost" id="out" hidden>Log out</button></div>
+</section>
+
+<main id="main" aria-live="polite"></main>
+</div>
+
+<div class="break" id="breakScr" role="dialog" aria-label="Break">
+  <h2>Take your time</h2>
+  <p class="mute">Breathe in as the circle grows. Breathe out as it shrinks.</p>
+  <div class="orb" aria-hidden="true"></div>
+  <p class="mute">Your place is saved. Come back when you're ready.</p>
+  <button class="btn" id="backBtn">Back to my lesson</button>
+</div>
+
+<script>
+const SUBJECTS=[
+{id:'math',name:'Math',sub:'Fractions: halves and quarters',ico:'🔢',col:'var(--c1)',steps:[
+ {t:'learn',h:'A half is 1 of 2 equal parts',x:'When you cut something into 2 equal parts, each part is one half. We write it as 1/2.',viz:[2,1]},
+ {t:'learn',h:'A quarter is 1 of 4 equal parts',x:'Cut into 4 equal parts and each one is a quarter, written 1/4. Two quarters fill the same space as one half.',viz:[4,2]},
+ {t:'q',q:'What is half of 8?',o:['2','4','6'],a:1,why:'8 split into 2 equal groups makes 4 in each group.'},
+ {t:'q',q:'Which is bigger, 1/2 or 1/4?',o:['1/2','1/4','They are the same'],a:0,why:'Fewer parts means each part is bigger. A half is bigger than a quarter.'},
+ {t:'q',q:'2/4 is the same amount as which fraction?',o:['1/4','1/2','3/4'],a:1,why:'Two quarters fill the same space as one half.'}]},
+{id:'sci',name:'Science',sub:'The water cycle',ico:'🔬',col:'var(--c2)',steps:[
+ {t:'learn',h:'Water moves in a loop',x:'Heat from the sun turns water in oceans and puddles into invisible vapor. This is called evaporation.'},
+ {t:'learn',h:'Vapor becomes clouds, then rain',x:'High up, the vapor cools and turns into tiny drops that make clouds. This is condensation. When the drops get heavy, they fall as rain or snow. This is precipitation.'},
+ {t:'q',q:'What turns water into vapor?',o:['Heat from the sun','Cold wind','Soil'],a:0,why:'The sun\'s heat makes water evaporate.'},
+ {t:'q',q:'What is it called when vapor cools into cloud drops?',o:['Evaporation','Condensation','Precipitation'],a:1,why:'Condensation is vapor turning back into liquid drops.'},
+ {t:'q',q:'Rain and snow falling are called…',o:['Precipitation','Evaporation','Condensation'],a:0,why:'Precipitation means water falling from clouds.'}]},
+{id:'read',name:'Reading',sub:'Finding the main idea',ico:'📚',col:'var(--c3)',steps:[
+ {t:'learn',h:'The main idea is what it is mostly about',x:'Read a short text and ask: what is one thing every sentence helps explain? That one thing is the main idea.'},
+ {t:'learn',h:'Try it on this text',x:'"Bees visit flowers to drink nectar. As they move from flower to flower, pollen sticks to their legs. This pollen helps new flowers and fruits grow."'},
+ {t:'q',q:'What is the main idea of the bee text?',o:['Bees make honey in winter','Bees help plants grow','Flowers are colorful'],a:1,why:'Every sentence explains how bees help plants through pollen.'},
+ {t:'q',q:'Which detail supports the main idea?',o:['Bees drink nectar','Pollen helps fruits grow','Bees have legs'],a:1,why:'This detail directly shows how bees help plants.'}]},
+{id:'geo',name:'Social studies',sub:'Reading a map',ico:'🌎',col:'var(--c4)',steps:[
+ {t:'learn',h:'Maps have a compass',x:'Most maps put North at the top, South at the bottom, East on the right and West on the left.'},
+ {t:'learn',h:'Use directions to describe places',x:'If the library is on the right side of a map and the school is on the left, the library is east of the school.'},
+ {t:'q',q:'On most maps, which direction is at the top?',o:['South','North','West'],a:1,why:'North is usually at the top.'},
+ {t:'q',q:'A park is on the left side of the map. Which direction is that?',o:['West','East','North'],a:0,why:'Left on a map is west.'}]}
+];
+
+const $=s=>document.querySelector(s),main=$('#main');
+const DEF={size:'1',font:'lex',theme:'auto',calm:false,tts:false,nudge:true,done:{},grade:'3',courses:{},ai:true,plan:[],lvl:{}};
+let S={...DEF},me=null;
+const rd=()=>{try{return JSON.parse(localStorage.getItem('steady2')||'{}')}catch(e){return{}}};
+const wr=d=>{try{localStorage.setItem('steady2',JSON.stringify(d))}catch(e){}};
+const save=()=>{if(!me)return;const d=rd();if(d.users&&d.users[me]){d.users[me].S=S;wr(d)}};
+let cur=null,step=0,answered=false,startAt=Date.now(),nudgeShown=false;
+
+function applySettings(){
+ document.documentElement.style.setProperty('--fs',(1.125*S.size)+'rem');
+ document.body.classList.toggle('atk',S.font==='atk');
+ document.body.classList.toggle('calm',S.calm);
+ if(S.theme==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',S.theme);
+ $('#sSize').value=S.size;$('#sFont').value=S.font;$('#sTheme').value=S.theme;
+ $('#sAI').checked=S.ai!==false;$('#sAI').disabled=!AI;$('#sCalm').checked=S.calm;$('#sTts').checked=S.tts;$('#sNudge').checked=S.nudge;
+}
+function bind(id,key,get){$(id).addEventListener('change',e=>{S[key]=get(e.target);save();applySettings();if(cur)render()})}
+bind('#sSize','size',e=>e.value);bind('#sFont','font',e=>e.value);bind('#sTheme','theme',e=>e.value);
+bind('#sCalm','calm',e=>e.checked);bind('#sTts','tts',e=>e.checked);bind('#sNudge','nudge',e=>e.checked);bind('#sAI','ai',e=>e.checked);$('#sAI').addEventListener('change',()=>{if(!cur)home()});
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{if(b.dataset.p==='reset')Object.assign(S,{size:'1',font:'lex',theme:'auto',calm:false});else Object.assign(S,PRE[b.dataset.p]);save();applySettings()});
+$('#gear').onclick=()=>{const h=$('#set').hidden;$('#set').hidden=!h;$('#gear').setAttribute('aria-expanded',h)};
+
+const GR=['K','1','2','3','4','5','6','7','8','9','10','11','12'];
+const SUBJ=[{name:'Math',ico:'🔢',col:'var(--c1)'},{name:'Science',ico:'🔬',col:'var(--c2)'},{name:'Reading and writing',ico:'📚',col:'var(--c3)'},{name:'Social studies',ico:'🌎',col:'var(--c4)'}];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const COURSES=[
+[['Elementary math',0,5],['Math 6',6,6],['Math 7',7,7],['Math 8',8,8],['Pre-Algebra',6,9],['Algebra 1',7,10],['Geometry',8,11],['Algebra 2',9,12],['Pre-Calculus',10,12],['Statistics',10,12],['Calculus',11,12]],
+[['Elementary science',0,5],['Life science',6,8],['Earth science',6,9],['Physical science',6,9],['Biology',8,12],['Chemistry',9,12],['Physics',10,12],['Environmental science',10,12],['Anatomy and physiology',10,12]],
+[['Elementary reading and writing',0,5],['English 6',6,6],['English 7',7,7],['English 8',8,8],['English 9',9,9],['English 10',10,10],['English 11 (American literature)',11,11],['English 12 (British literature)',12,12],['AP Language or Literature',10,12]],
+[['Elementary social studies',0,5],['Geography',6,12],['World history',6,12],['US history',6,12],['Civics and government',7,12],['Economics',10,12],['AP or honors history',10,12]]];
+const gl=g=>g==='K'?'kindergarten':'grade '+g;
+const ALT=['Cut a pizza into two pieces of the same size. One piece is one half. 🍕','The sun warms a puddle until the water floats up into the air. ☀️💧','The main idea is the one thing every sentence is about. Ask: what is this mostly about? 🔍','On a map, north is like up on a screen. ⬆️ Right is east. Left is west.'];
+const mkL=(si,b,sub,a,c,qs)=>({si,b,id:'b'+si+b,name:SUBJ[si].name,sub,col:SUBJ[si].col,steps:[{t:'learn',h:a[0],x:a[1],alt:a[2]},{t:'learn',h:c[0],x:c[1],alt:c[2]},...qs.map(q=>({t:'q',q:q[0],o:q[1],a:q[2],why:q[3]}))]});
+const LIB=[
+...SUBJECTS.map((s,i)=>{s.steps[0].alt=ALT[i];return{si:i,b:1,id:'b'+i+'1',name:SUBJ[i].name,sub:s.sub,col:SUBJ[i].col,steps:s.steps}}),
+mkL(0,0,'Counting and adding to 10',['Counting means saying numbers in order','Point to each thing once and say one number for each. 🍎🍎🍎 is 3 apples.','Touch each apple and say 1, 2, 3. The last number you say tells how many.'],['Adding puts groups together','2 apples plus 1 apple makes 3 apples. 🍎🍎 + 🍎 = 🍎🍎🍎'],[['What is 2 + 2?',['3','4','5'],1,'Two and two more makes four.'],['What is 3 + 1?',['4','5','2'],0,'Three and one more makes four.'],['How many stars? ⭐⭐⭐⭐⭐',['4','5','6'],1,'Count each star once. There are 5.']]),
+mkL(1,0,'Plants need sun and water',['Plants need three things','Plants need sunlight, water, and air to grow.','A plant is like a pet. A pet needs food and water. A plant makes its food from sunlight, water, and air. 🌱☀️💧'],['Roots, stem, and leaves','Roots drink water. The stem holds the plant up. Leaves catch sunlight.'],[['What do roots do?',['Drink water','Make flowers','Catch sunlight'],0,'Roots take in water from the soil.'],['Which part catches sunlight?',['Roots','Leaves','Stem'],1,'Leaves catch sunlight.'],['What helps a plant grow?',['Sunlight and water','Only candy','Loud noise'],0,'Plants grow with sunlight, water, and air.']]),
+mkL(2,0,'Letter sounds and rhymes',['Rhyming words sound the same at the end','Cat and hat rhyme. They both end with the sound “at”.','Say the words out loud. If the ends sound like twins, they rhyme. 🐱🎩'],['Letters make sounds','The letter B makes the sound “buh”. Ball starts with B.'],[['Which word rhymes with cat?',['dog','hat','cup'],1,'Hat ends with “at”, like cat.'],['Which word starts with B?',['ball','sun','cat'],0,'Ball starts with the “buh” sound.'],['Which word rhymes with sun?',['run','tree','bed'],0,'Run ends with “un”, like sun.']]),
+mkL(3,0,'Community helpers',['Helpers keep a community safe and healthy','Firefighters put out fires. Doctors help sick people. Teachers help us learn.','A community is like a team. Each person has a job that helps others. 🚒🩺📚'],['We follow rules together','Rules help everyone stay safe and be fair. Stopping at a red light is a rule.'],[['Who puts out fires?',['Firefighter','Teacher','Baker'],0,'Firefighters put out fires.'],['Who helps you learn at school?',['Teacher','Pilot','Farmer'],0,'Teachers help students learn.'],['Why do we have rules?',['To keep everyone safe and fair','To be silly','To make people sad'],0,'Rules keep people safe and treat everyone fairly.']]),
+mkL(0,2,'Solving one-step equations',['Undo what was done to x','In x + 5 = 12, 5 was added to x. To undo it, subtract 5 from both sides. So x = 7.','Think of a balance scale. Whatever you take from one side, take from the other so it stays level. ⚖️'],['Multiplication is undone by division','In 3x = 12, x was multiplied by 3. Divide both sides by 3. So x = 4.'],[['Solve x + 9 = 15',['5','6','24'],1,'15 − 9 = 6.'],['Solve 4x = 20',['5','16','80'],0,'20 ÷ 4 = 5.'],['Solve x − 3 = 10',['7','13','30'],1,'Add 3 to both sides: 10 + 3 = 13.']]),
+mkL(1,2,'Cells: the building blocks of life',['All living things are made of cells','A cell is the smallest unit of life. Your body has trillions of them.','Cells are like tiny rooms in a huge building, and each room has a job. 🧱'],['Parts of a cell have jobs','The nucleus holds the instructions. Mitochondria make energy. The cell membrane controls what goes in and out.'],[['Which part makes energy for the cell?',['Nucleus','Mitochondria','Membrane'],1,'Mitochondria release energy the cell can use.'],['What does the nucleus hold?',['The cell’s instructions (DNA)','Only water','Sunlight'],0,'The nucleus stores DNA, the cell’s instructions.'],['What controls what enters and leaves a cell?',['Membrane','Nucleus','Mitochondria'],0,'The cell membrane works like a gate.']]),
+mkL(2,2,'Writing a thesis statement',['A thesis is your main claim','A thesis statement is one sentence that tells the reader your main point and what you will prove.','Imagine telling a friend your opinion in one sentence, plus the reason. That sentence is your thesis. 💬'],['A strong thesis has a claim and a reason','Weak: “Phones are bad.” Strong: “Schools should limit phones in class because they reduce focus.”'],[['Which is a stronger thesis?',['Phones are bad.','Schools should limit phones in class because they reduce focus.','I will write about phones.'],1,'It makes a clear claim and gives a reason.'],['Where does a thesis usually go?',['End of the introduction','The last page','The title only'],0,'It usually closes the introduction.'],['What should a thesis include?',['A claim you can support','A random fact','A question only'],0,'A thesis states a claim you can prove with evidence.']]),
+mkL(3,2,'Three branches of government',['Power is split into three branches','The legislative branch makes laws. The executive branch carries them out. The judicial branch decides what laws mean.','Think of a game: one group writes the rules, one runs the game, one acts as referee. 🏛️'],['Checks and balances','Each branch can limit the others, so no one branch gets too much power.'],[['Which branch makes laws?',['Legislative','Executive','Judicial'],0,'Congress, the legislative branch, makes laws.'],['Which branch includes the President?',['Judicial','Executive','Legislative'],1,'The President leads the executive branch.'],['Why do checks and balances exist?',['So no branch has too much power','To make laws slower for fun','To remove the courts'],0,'They keep power balanced between the branches.']])];
+const useAI=()=>!!AI&&S.ai!==false;
+const bandOf=()=>{const g=GR.indexOf(S.grade);return g<=2?0:g<=5?1:2};
+const diff=i=>{const v=(S.lvl||{})[i]||0;return v<0?' Make it a little easier than the grade level.':v>0?' Make it a little harder than the grade level.':''};
+function offline(i){const v=(S.lvl||{})[i]||0,b=Math.max(0,Math.min(2,bandOf()+v));begin({...LIB.find(x=>x.si===i&&x.b===b)})}
+const go=i=>useAI()?pickClass(i):offline(i);
+let miss=0,qMiss=0,planEdit=false;
+const PRE={calm:{size:'1.25',font:'lex',theme:'light',calm:true},hc:{size:'1.25',theme:'hc',calm:true},dys:{size:'1.25',font:'atk',theme:'light',calm:true}};
+const LS='steady-lang';
+let LANG={cur:'en',langs:{}};try{Object.assign(LANG,JSON.parse(localStorage.getItem(LS)||'{}'))}catch(e){}
+let TR=(LANG.langs[LANG.cur]||{}).tr||{};
+const L=(k,...a)=>{let s=TR[k]||k;a.forEach((v,i)=>s=s.split('{'+i+'}').join(v));return s};
+const KEYS=[...new Set(['App menu','Log in or sign up','Step {0} of {1}',"Quick setups", "Calm", "High contrast", "Dyslexia-friendly", "Reset", "Use Claude for lessons, translation and homework photos", "My plan for today", "First", "Then", "Later", "Add to my plan", "Edit plan", "Done editing", "Clear plan", "Nothing planned yet. Add what you want to do, in order.", "Break time", "Remove", "Continue where you left off", "Continue", "Explain it another way", "Here is another way to see it:", "Let's make this easier. I removed one answer.", "Great accuracy. Your next lesson will be a little harder.", "That one was tough. Your next lesson will be a little easier. You can also do it again.", "About and privacy", "Why I built Steady", "What testers said", "Accessibility built in", "Privacy", "What stays on your device", "What is sent to Claude", "AI-free mode", "Close", "Built-in lesson", "AI-free mode: these lessons are built into the app and nothing is sent anywhere. Homework photos and unlimited lessons need Claude.", "Or use a built-in lesson", "Turn on Claude in Settings to translate into other languages.", "Back to my lesson","Home", "Break", "Settings", "Language", "Other language…", "Text size", "Medium", "Large", "Extra large", "Font", "Colors", "Match my device", "Light", "Dark", "Stop all movement", "Show read aloud button", "Suggest a break every 10 minutes", "Log out", "Take your time", "Breathe in as the circle grows. Breathe out as it shrinks.", "Your place is saved. Come back when you're ready.", "Back to my lesson", "What do you want to learn?", "Pick a subject. Lessons are short and one step at a time.", "My grade", "Kindergarten", "Grade {0}", "Choose your class", "Scan my homework", "Snap a photo and get clear steps, one at a time.", "Take or choose a photo", "Your photo is sent to Claude to write the steps.", "Lessons for every grade and homework help need Claude, which isn't available in this view. Here are sample lessons you can try.", "Hi, {0}", "Create your profile", "Welcome back", "Pick a nickname and a number code. Use a nickname, not your full name.", "Log in to see your lessons.", "Log in", "Sign up", "Nickname", "Number code (4 to 8 digits)", "Create profile", "Profiles are saved only on this device and keep each student's progress separate. This is not a secure account, so don't use a code you use anywhere else.", "Enter a nickname and a number code with 4 to 8 digits.", "That nickname is already used on this device. Pick another, or log in.", "That nickname and code do not match. Try again.", "Something went wrong. Please try again.", "Claude needs your permission to make lessons. Try again and choose Allow.", "This can take about 20 seconds.", "Finding units…", "Making your lesson…", "Reading your homework…", "Translating…", "Translating needs Claude, which is not available in this view.", "Which {0} class are you in?", "Pick the class from your schedule.", "Not listed? Type your class name.", "Use this class", "Back", "What are you working on in class right now? Type a unit, chapter, or topic.", "For example: solving two-step equations", "Make my lesson", "Or tap a unit:", "Not sure what to type?", "Show units for this class", "Change class", "Read aloud", "Next", "Yes.", "Not this one. Look again and try another answer.", "You've been learning for a while. A short break can help.", "Lesson finished", "You worked through {0} steps of {1}. That's real progress.", "Do it again", "Choose another subject", "Check your answer", "Try the steps on your own first. Then compare: {0}", "your homework", "Homework help", "Which language do you want?", "Type the name of any language, in any language.",...SUBJ.map(s=>s.name),...COURSES.flat().map(c=>c[0])])];
+const LANGS=[['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['pt','Português'],['it','Italiano'],['zh','中文 (简体)'],['ja','日本語'],['ko','한국어'],['ar','العربية'],['hi','हिन्दी'],['ru','Русский'],['vi','Tiếng Việt'],['tl','Filipino'],['tr','Türkçe'],['pl','Polski']];
+const ES=["Menú de la app", "Iniciar sesión o registrarse", "Paso {0} de {1}", "Ajustes rápidos", "Calma", "Alto contraste", "Para dislexia", "Restablecer", "Usar Claude para lecciones, traducción y fotos de tareas", "Mi plan de hoy", "Primero", "Luego", "Después", "Añadir a mi plan", "Editar plan", "Listo", "Borrar plan", "Todavía no hay nada planeado. Añade lo que quieres hacer, en orden.", "Hora del descanso", "Quitar", "Sigue donde lo dejaste", "Continuar", "Explícalo de otra manera", "Otra forma de verlo:", "Vamos a hacerlo más fácil. Quité una respuesta.", "¡Muy buena precisión! Tu próxima lección será un poco más difícil.", "Esta fue difícil. Tu próxima lección será un poco más fácil. También puedes repetirla.", "Acerca de y privacidad", "Por qué hice Steady", "Lo que dijeron los probadores", "Accesibilidad incluida", "Privacidad", "Lo que se queda en tu dispositivo", "Lo que se envía a Claude", "Modo sin IA", "Cerrar", "Lección incluida", "Modo sin IA: estas lecciones vienen en la app y no se envía nada a ningún lado. Las fotos de tareas y las lecciones ilimitadas necesitan Claude.", "O usa una lección incluida", "Activa Claude en Ajustes para traducir a otros idiomas.", "Volver a mi lección", "Inicio", "Descanso", "Ajustes", "Idioma", "Otro idioma…", "Tamaño del texto", "Mediano", "Grande", "Extra grande", "Letra", "Colores", "Igual que mi dispositivo", "Claro", "Oscuro", "Detener todo movimiento", "Mostrar botón de leer en voz alta", "Sugerir un descanso cada 10 minutos", "Cerrar sesión", "Tómate tu tiempo", "Inhala mientras el círculo crece. Exhala mientras se encoge.", "Tu lugar está guardado. Vuelve cuando estés listo.", "¿Qué quieres aprender?", "Elige una materia. Las lecciones son cortas y van paso a paso.", "Mi grado", "Kínder", "Grado {0}", "Elige tu clase", "Escanear mi tarea", "Toma una foto y recibe pasos claros, uno a la vez.", "Tomar o elegir una foto", "Tu foto se envía a Claude para escribir los pasos.", "Las lecciones para cada grado y la ayuda con tareas necesitan Claude, que no está disponible aquí. Aquí tienes lecciones de muestra.", "Hola, {0}", "Crea tu perfil", "Bienvenido de nuevo", "Elige un apodo y un código numérico. Usa un apodo, no tu nombre completo.", "Inicia sesión para ver tus lecciones.", "Iniciar sesión", "Registrarme", "Apodo", "Código numérico (de 4 a 8 dígitos)", "Crear perfil", "Los perfiles se guardan solo en este dispositivo y mantienen separado el progreso de cada estudiante. No es una cuenta segura, así que no uses un código que uses en otro lugar.", "Escribe un apodo y un código numérico de 4 a 8 dígitos.", "Ese apodo ya se usa en este dispositivo. Elige otro o inicia sesión.", "El apodo y el código no coinciden. Inténtalo de nuevo.", "Algo salió mal. Inténtalo de nuevo.", "Claude necesita tu permiso para crear lecciones. Inténtalo de nuevo y elige Permitir.", "Esto puede tardar unos 20 segundos.", "Buscando unidades…", "Creando tu lección…", "Leyendo tu tarea…", "Traduciendo…", "Para traducir se necesita Claude, que no está disponible en esta vista.", "¿En qué clase de {0} estás?", "Elige la clase de tu horario.", "¿No aparece? Escribe el nombre de tu clase.", "Usar esta clase", "Atrás", "¿En qué estás trabajando ahora en clase? Escribe una unidad, un capítulo o un tema.", "Por ejemplo: resolver ecuaciones de dos pasos", "Crear mi lección", "O toca una unidad:", "¿No sabes qué escribir?", "Mostrar unidades de esta clase", "Cambiar de clase", "Leer en voz alta", "Siguiente", "Sí.", "Esta no es. Mira otra vez e intenta con otra respuesta.", "Llevas un rato aprendiendo. Un descanso corto puede ayudar.", "Lección terminada", "Completaste {0} pasos de {1}. ¡Es un progreso real!", "Hacerla otra vez", "Elegir otra materia", "Revisa tu respuesta", "Primero intenta los pasos por tu cuenta. Luego compara: {0}", "tu tarea", "Ayuda con la tarea", "¿Qué idioma quieres?", "Escribe el nombre de cualquier idioma, en cualquier idioma.", "Matemáticas", "Ciencias", "Lectura y escritura", "Estudios sociales", "Matemáticas de primaria", "Matemáticas 6", "Matemáticas 7", "Matemáticas 8", "Pre-álgebra", "Álgebra 1", "Geometría", "Álgebra 2", "Precálculo", "Estadística", "Cálculo", "Ciencias de primaria", "Ciencias de la vida", "Ciencias de la Tierra", "Ciencias físicas", "Biología", "Química", "Física", "Ciencias ambientales", "Anatomía y fisiología", "Lectura y escritura de primaria", "Inglés 6", "Inglés 7", "Inglés 8", "Inglés 9", "Inglés 10", "Inglés 11 (literatura estadounidense)", "Inglés 12 (literatura británica)", "Lengua o literatura AP", "Estudios sociales de primaria", "Geografía", "Historia mundial", "Historia de EE. UU.", "Educación cívica y gobierno", "Economía", "Historia AP o con honores"],FR=["Menu de l'application", "Se connecter ou s'inscrire", "Étape {0} sur {1}", "Réglages rapides", "Calme", "Contraste élevé", "Adapté à la dyslexie", "Réinitialiser", "Utiliser Claude pour les leçons, la traduction et les photos de devoirs", "Mon plan du jour", "D'abord", "Ensuite", "Plus tard", "Ajouter à mon plan", "Modifier le plan", "Terminé", "Effacer le plan", "Rien de prévu pour l'instant. Ajoute ce que tu veux faire, dans l'ordre.", "Pause", "Retirer", "Reprendre là où tu t'es arrêté", "Continuer", "Explique-le autrement", "Une autre façon de le voir :", "Rendons ça plus facile. J'ai retiré une réponse.", "Très précis ! Ta prochaine leçon sera un peu plus difficile.", "Celle-ci était difficile. Ta prochaine leçon sera un peu plus facile. Tu peux aussi la refaire.", "À propos et confidentialité", "Pourquoi j'ai créé Steady", "Ce que les testeurs ont dit", "Accessibilité intégrée", "Confidentialité", "Ce qui reste sur ton appareil", "Ce qui est envoyé à Claude", "Mode sans IA", "Fermer", "Leçon intégrée", "Mode sans IA : ces leçons sont intégrées à l'application et rien n'est envoyé ailleurs. Les photos de devoirs et les leçons illimitées nécessitent Claude.", "Ou utilise une leçon intégrée", "Active Claude dans les réglages pour traduire dans d'autres langues.", "Retour à ma leçon", "Accueil", "Pause", "Réglages", "Langue", "Autre langue…", "Taille du texte", "Moyenne", "Grande", "Très grande", "Police", "Couleurs", "Comme mon appareil", "Clair", "Sombre", "Arrêter tout mouvement", "Afficher le bouton de lecture à voix haute", "Suggérer une pause toutes les 10 minutes", "Se déconnecter", "Prends ton temps", "Inspire pendant que le cercle grandit. Expire pendant qu'il rétrécit.", "Ta place est enregistrée. Reviens quand tu es prêt.", "Que veux-tu apprendre ?", "Choisis une matière. Les leçons sont courtes, une étape à la fois.", "Ma classe", "Maternelle", "Niveau {0}", "Choisis ton cours", "Scanner mes devoirs", "Prends une photo et reçois des étapes claires, une à la fois.", "Prendre ou choisir une photo", "Ta photo est envoyée à Claude pour écrire les étapes.", "Les leçons pour chaque niveau et l'aide aux devoirs nécessitent Claude, qui n'est pas disponible ici. Voici des leçons d'exemple.", "Salut, {0}", "Crée ton profil", "Bon retour", "Choisis un pseudo et un code à chiffres. Utilise un pseudo, pas ton nom complet.", "Connecte-toi pour voir tes leçons.", "Se connecter", "S'inscrire", "Pseudo", "Code à chiffres (4 à 8 chiffres)", "Créer le profil", "Les profils sont enregistrés uniquement sur cet appareil et séparent la progression de chaque élève. Ce n'est pas un compte sécurisé : n'utilise pas un code que tu utilises ailleurs.", "Saisis un pseudo et un code de 4 à 8 chiffres.", "Ce pseudo est déjà utilisé sur cet appareil. Choisis-en un autre ou connecte-toi.", "Le pseudo et le code ne correspondent pas. Réessaie.", "Une erreur s'est produite. Réessaie.", "Claude a besoin de ta permission pour créer des leçons. Réessaie et choisis Autoriser.", "Cela peut prendre environ 20 secondes.", "Recherche des unités…", "Création de ta leçon…", "Lecture de tes devoirs…", "Traduction…", "La traduction nécessite Claude, qui n'est pas disponible dans cette vue.", "Dans quel cours de {0} es-tu ?", "Choisis le cours de ton emploi du temps.", "Il n'y est pas ? Écris le nom de ton cours.", "Utiliser ce cours", "Retour", "Sur quoi travailles-tu en classe en ce moment ? Écris une unité, un chapitre ou un sujet.", "Par exemple : résoudre des équations en deux étapes", "Créer ma leçon", "Ou touche une unité :", "Tu ne sais pas quoi écrire ?", "Afficher les unités de ce cours", "Changer de cours", "Lire à voix haute", "Suivant", "Oui.", "Ce n'est pas celle-ci. Regarde encore et essaie une autre réponse.", "Tu apprends depuis un moment. Une courte pause peut aider.", "Leçon terminée", "Tu as fait {0} étapes de {1}. C'est un vrai progrès !", "La refaire", "Choisir une autre matière", "Vérifie ta réponse", "Essaie d'abord les étapes tout seul. Puis compare : {0}", "tes devoirs", "Aide aux devoirs", "Quelle langue veux-tu ?", "Écris le nom de n'importe quelle langue, dans n'importe quelle langue.", "Mathématiques", "Sciences", "Lecture et écriture", "Sciences sociales", "Mathématiques du primaire", "Mathématiques 6", "Mathématiques 7", "Mathématiques 8", "Pré-algèbre", "Algèbre 1", "Géométrie", "Algèbre 2", "Précalcul", "Statistiques", "Calcul différentiel", "Sciences du primaire", "Sciences de la vie", "Sciences de la Terre", "Sciences physiques", "Biologie", "Chimie", "Physique", "Sciences de l'environnement", "Anatomie et physiologie", "Lecture et écriture du primaire", "Anglais 6", "Anglais 7", "Anglais 8", "Anglais 9", "Anglais 10", "Anglais 11 (littérature américaine)", "Anglais 12 (littérature britannique)", "Langue ou littérature AP", "Sciences sociales du primaire", "Géographie", "Histoire du monde", "Histoire des États-Unis", "Éducation civique et gouvernement", "Économie", "Histoire AP ou avancée"];
+const mkT=a=>Object.fromEntries(KEYS.map((k,i)=>[k,a[i]]));
+const BUILTIN={es:{name:'Español',code:'es',rtl:false,tr:mkT(ES)},fr:{name:'Français',code:'fr',rtl:false,tr:mkT(FR)}};
+Object.entries(BUILTIN).forEach(([c,v])=>{LANG.langs[c]=v});TR=(LANG.langs[LANG.cur]||{}).tr||{};
+const langName=()=>LANG.cur==='en'?'English':(LANG.langs[LANG.cur]||{}).name||LANG.cur;
+const lp=()=>LANG.cur==='en'?'':'IMPORTANT: write every text value in '+langName()+', not English. ';
+const inL=()=>LANG.cur==='en'?'':' Write all text values in '+langName()+'.';
+function langOptions(){const all=[...LANGS];Object.keys(LANG.langs).forEach(c=>{if(!all.some(x=>x[0]===c))all.push([c,LANG.langs[c].name])});return all.map(x=>`<option value="${esc(x[0])}"${x[0]===LANG.cur?' selected':''}>${esc(x[1])}</option>`).join('')+`<option value="other">${L('Other language…')}</option>`}
+function trNode(n){
+ if(n.nodeType===3){const raw=n.__en!==undefined?n.__en:n.nodeValue,k=raw.trim();if(!k)return;
+  if(TR[k]){n.__en=raw;const v=raw.replace(k,()=>TR[k]);if(n.nodeValue!==v)n.nodeValue=v}
+  else if(n.__en!==undefined&&n.nodeValue!==n.__en)n.nodeValue=n.__en}
+ else if(n.nodeType===1&&n.tagName!=='SCRIPT'&&n.tagName!=='STYLE'){
+  ['placeholder','aria-label'].forEach(a=>{if(n.hasAttribute(a)){n.__a=n.__a||{};const o=n.__a[a]!==undefined?n.__a[a]:n.getAttribute(a);n.__a[a]=o;const v=TR[o]||o;if(n.getAttribute(a)!==v)n.setAttribute(a,v)}});
+  n.childNodes.forEach(trNode)}
+}
+new MutationObserver(ms=>ms.forEach(m=>{m.addedNodes.forEach(trNode);if(m.type==='characterData')trNode(m.target)})).observe(document.body,{childList:true,subtree:true,characterData:true});
+function applyLang(){
+ const l=LANG.langs[LANG.cur];TR=l?l.tr:{};
+ document.documentElement.lang=l?l.code:'en';document.documentElement.dir=l&&l.rtl?'rtl':'ltr';
+ $('#sLang').innerHTML=langOptions();trNode(document.body);syncHdr();
+}
+function langPick(v){if(v==='other')return otherPanel();const e=LANGS.find(x=>x[0]===v);setLang(v,e?e[1]:(LANG.langs[v]||{}).name||v)}
+function otherPanel(){
+ showHome(!!me);$('#brk').hidden=true;cur=null;
+ main.innerHTML=`<div class="panel"><h2>Which language do you want?</h2><p class="mute">Type the name of any language, in any language.</p><div class="stack"><input id="ol" class="txt" maxlength="40"><button class="btn" id="olb">Use this language</button></div><div class="row"><button class="btn ghost" id="olc">Back</button></div></div>`;
+ const go=()=>{const v=$('#ol').value.trim();if(v)setLang('x-'+v.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'-'),v)};
+ $('#olb').onclick=go;$('#ol').onkeydown=e=>{if(e.key==='Enter')go()};$('#olc').onclick=()=>me?home():auth();
+}
+async function setLang(code,name){
+ if(code!=='en'&&!LANG.langs[code]){
+  if(!useAI()){msg=AI?L('Turn on Claude in Settings to translate into other languages.'):L('Translating needs Claude, which is not available in this view.');return me?home():auth()}
+  const j=++job;showHome(!!me);main.innerHTML=`<div class="panel"><p>${L('Translating…')}</p><p class="mute">${L('This can take about 20 seconds.')}</p></div>`;
+  try{
+   const tr={},ok=(k,v)=>typeof v==='string'&&v.trim()&&(k.match(/\{\d\}/g)||[]).every(x=>v.includes(x));
+   let info=null;
+   for(let pass=0;pass<3;pass++){
+    const need=KEYS.map((k,i)=>[i,k]).filter(x=>!tr[x[1]]);if(!need.length)break;
+    const chunks=[];for(let i=0;i<need.length;i+=25)chunks.push(need.slice(i,i+25));
+    const rs=await Promise.allSettled(chunks.map(c=>AI.json(`Translate these user-interface strings into ${name}. Use simple, friendly words that students aged 5 to 18 understand. Keep placeholders like {0} and {1} unchanged. Return ONLY JSON: {"code":"BCP-47 language code","rtl":true if the language is written right to left otherwise false,"strings":{"<number>":"<translation>"}} with exactly one entry for every input number. Input: `+JSON.stringify(Object.fromEntries(c)))));
+    if(j!==job)return;
+    rs.forEach((x,ci)=>{if(x.status!=='fulfilled'||!x.value)return;const r=x.value,s=r.strings||r;if(!info&&r.code)info=r;chunks[ci].forEach(([i,k])=>{const v=s[i];if(ok(k,v))tr[k]=v})});
+    if(pass===0&&rs.every(x=>x.status==='rejected'))throw rs[0].reason;
+   }
+   if(Object.keys(tr).length<KEYS.length*.6)throw 0;
+   LANG.langs[code]={name,code:String((info&&info.code)||code),rtl:!!(info&&info.rtl),tr};
+  }catch(e){if(j!==job)return;msg=bad(e);return me?home():auth()}
+ }
+ LANG.cur=code;try{localStorage.setItem(LS,JSON.stringify(LANG))}catch(e){}
+ applyLang();me?home():auth();
+}
+$('#sLang').onchange=e=>langPick(e.target.value);
+let AI=null,IMG=false,msg='';
+(async()=>{try{AI=await window.claude?.use('sample');if(AI){try{IMG=!!(await AI.limits()).images}catch(e){}}}catch(e){}applySettings();if(!cur&&me)home()})();
+
+function planHTML(){
+ const p=S.plan||[],ed=planEdit,first=p.findIndex(x=>!x.d),nm=x=>x==='b'?L('Break time'):L(SUBJ[x].name);
+ let h=`<div class="panel"><h2>${L('My plan for today')}</h2>`;
+ if(!p.length&&!ed)h+=`<p class="mute">${L('Nothing planned yet. Add what you want to do, in order.')}</p>`;
+ h+=`<ol class="steps">`+p.map((x,i)=>`<li class="${x.d?'d':''}${i===first?' cur':''}" style="--col:${x.t==='b'?'var(--pri)':SUBJ[x.t].col}"><button class="chk" data-k="${i}" aria-pressed="${!!x.d}" aria-label="${esc(nm(x.t))}">${x.d?'✓':''}</button><span class="lb">${x.d?'✓':i===first?L('First'):i===first+1?L('Then'):L('Later')}</span><button class="go" data-go="${x.t}">${nm(x.t)}</button>${ed?`<button class="x" data-r="${i}" aria-label="${L('Remove')}">×</button>`:''}</li>`).join('')+`</ol>`;
+ if(ed)h+=`<div class="add">`+[0,1,2,3,'b'].map(x=>`<button class="btn ghost sm" data-a="${x}">+ ${nm(x)}</button>`).join('')+`</div>`;
+ return h+`<div class="row"><button class="btn ghost sm" id="pe">${ed?L('Done editing'):p.length?L('Edit plan'):L('Add to my plan')}</button>${p.length&&ed?`<button class="btn ghost sm" id="pc">${L('Clear plan')}</button>`:''}</div></div>`;
+}
+function home(){
+ if(!me)return auth();
+ job++;showHome(false);cur=null;$('#brk').hidden=true;const g=S.grade,ai=useAI();
+ let h='';
+ if(S.resume&&S.resume.cur)h+=`<div class="panel resume"><h2>${L('Continue where you left off')}</h2><p>${esc(L(S.resume.cur.name))}: ${esc(S.resume.cur.sub)}<br><span class="mute">${L('Step {0} of {1}',S.resume.step+1,S.resume.cur.steps.length)}</span></p><button class="btn" id="rs">${L('Continue')}</button></div>`;
+ h+=`<h2>What do you want to learn?</h2><p class="mute">Pick a subject. Lessons are short and one step at a time.</p><div class="grade"><label for="gs">My grade</label><select id="gs">`+GR.map(x=>`<option value="${x}"${x===g?' selected':''}>${x==='K'?L('Kindergarten'):L('Grade {0}',x)}</option>`).join('')+`</select></div>`+planHTML();
+ h+=`<div class="subjects" style="margin-top:16px">`+SUBJ.map((s,i)=>`<button class="subj" style="--col:${s.col}" data-i="${i}"><span class="ico" aria-hidden="true">${s.ico}</span><span><b>${s.name}</b><span class="mute">${esc(ai?(S.courses||{})[i]||L('Choose your class'):L('Built-in lesson'))}</span></span></button>`).join('')+`</div>`;
+ if(ai&&IMG)h+=`<div class="panel scan"><h2>Scan my homework</h2><p>Snap a photo and get clear steps, one at a time.</p><label class="btn" for="pic">Take or choose a photo</label><input id="pic" type="file" accept="image/*" capture="environment" hidden><p class="small">Your photo is sent to Claude to write the steps.</p></div>`;
+ if(!ai)h+=`<p class="mute small">AI-free mode: these lessons are built into the app and nothing is sent anywhere. Homework photos and unlimited lessons need Claude.</p>`;
+ h+=`<div class="row" style="justify-content:center"><button class="btn ghost sm" id="ab">About and privacy</button></div>`;
+ main.innerHTML=(msg?`<div class="nudge" role="alert"><span>${esc(msg)}</span></div>`:'')+h;msg='';
+ $('#gs').onchange=e=>{if(S.grade!==e.target.value)S.courses={};S.grade=e.target.value;save();home()};
+ main.querySelectorAll('.subj').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+ const pic=$('#pic');if(pic)pic.onchange=e=>scan(e.target.files[0]);
+ $('#rs')&&($('#rs').onclick=()=>begin(S.resume.cur,S.resume.step,S.resume.miss));
+ main.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const x=S.plan[+b.dataset.k];x.d=!x.d;save();home()});
+ main.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{S.plan.splice(+b.dataset.r,1);save();home()});
+ main.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{(S.plan=S.plan||[]).push({t:b.dataset.a==='b'?'b':+b.dataset.a,d:false});save();home()});
+ main.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const x=b.dataset.go;x==='b'?takeBreak():go(+x)});
+ $('#pe').onclick=()=>{planEdit=!planEdit;home()};$('#pc')&&($('#pc').onclick=()=>{S.plan=[];save();home()});
+ $('#ab').onclick=about;
+}
+const ABOUT_STORY="I founded Welcome Neurodiversity after seeing that kids with ADHD or autism often find it hard to stay focused on schoolwork. Steady is my answer: one small step at a time, no timers, no scores, and a break whenever you need one.";
+const TESTERS=[]; // add real feedback here: {who:'Student, grade 5',said:'...',changed:'...'}
+function about(){
+ showHome(true);cur=null;$('#brk').hidden=true;
+ main.innerHTML=`<div class="panel"><h2>Why I built Steady</h2><p>${esc(ABOUT_STORY)}</p>
+ <h2>What testers said</h2>${TESTERS.length?TESTERS.map(x=>`<p>“${esc(x.said)}” <span class="mute">${esc(x.who)}. What I changed: ${esc(x.changed)}</span></p>`).join(''):`<p class="mute">No tester feedback has been added yet.</p>`}
+ <h2>Accessibility built in</h2><ul class="plain"><li>One step per screen, with the same buttons in the same place.</li><li>Works with a keyboard, with labels for screen readers.</li><li>Text size, a dyslexia-friendly font, and a high-contrast theme.</li><li>A setting that stops all movement, and a Break button on every lesson.</li><li>Read aloud, and any language.</li></ul>
+ <h2>Privacy</h2><h3>What stays on your device</h3><p>Nickname, number code (scrambled), grade, classes, plan, progress and settings are saved only in this browser.</p>
+ <h3>What is sent to Claude</h3><p>Only when Claude is on: your grade, class and topic (to write lessons), homework photos (to write steps), and the app's words (to translate them). Nothing else.</p>
+ <h3>AI-free mode</h3><p>Turn off “Use Claude” in Settings. Lessons then come from the app itself and nothing is sent anywhere.</p>
+ <div class="row"><button class="btn" id="abc">Close</button></div></div>`;
+ $('#abc').onclick=home;
+}
+let mode='in',job=0;
+const showHome=v=>{$('#hmb').hidden=!v};
+const hh=async(pin,salt)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+':'+pin))),b=>b.toString(16).padStart(2,'0')).join('');
+const err=t=>{$('#err').textContent=t};
+function syncHdr(){const u=me&&(rd().users||{})[me];$('#hi').textContent=u?L('Hi, {0}',u.nick):'';$('#hi').hidden=$('#out').hidden=!u}
+function auth(){
+ job++;showHome(false);cur=null;$('#brk').hidden=true;const up=mode==='up';
+ main.innerHTML=`<div class="panel">${msg?`<div class="nudge" role="alert"><span>${esc(msg)}</span></div>`:''}<div class="grade" style="margin:0 0 16px;box-shadow:none"><label for="al"><span aria-hidden="true">🌐</span> <span>Language</span></label><select id="al">${langOptions()}</select></div><h2>${up?'Create your profile':'Welcome back'}</h2><p class="mute">${up?'Pick a nickname and a number code. Use a nickname, not your full name.':'Log in to see your lessons.'}</p>
+ <div class="seg" role="group" aria-label="Log in or sign up"><button class="${up?'':'on'}" id="mi">Log in</button><button class="${up?'on':''}" id="mu">Sign up</button></div>
+ <label for="nk">Nickname</label><input id="nk" class="txt" maxlength="24" autocomplete="username" style="width:100%;margin:6px 0 12px">
+ <label for="pn">Number code (4 to 8 digits)</label><input id="pn" class="txt" type="password" inputmode="numeric" maxlength="8" autocomplete="${up?'new-password':'current-password'}" style="width:100%;margin:6px 0 12px">
+ <div class="row" style="margin-top:8px"><button class="btn wide" id="ok">${up?'Create profile':'Log in'}</button></div><p id="err" role="alert"></p>
+ <p class="mute small">Profiles are saved only on this device and keep each student's progress separate. This is not a secure account, so don't use a code you use anywhere else.</p></div>`;msg='';
+ $('#al').onchange=e=>langPick(e.target.value);$('#mi').onclick=()=>{mode='in';auth()};$('#mu').onclick=()=>{mode='up';auth()};
+ $('#ok').onclick=submit;main.querySelectorAll('input').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')submit()});
+}
+async function submit(){
+ const nk=$('#nk').value.trim(),pn=$('#pn').value;
+ if(!nk||!/^\d{4,8}$/.test(pn))return err('Enter a nickname and a number code with 4 to 8 digits.');
+ const d=rd();d.users=d.users||{};const k=nk.toLowerCase(),u=d.users[k];
+ try{
+  if(mode==='up'){
+   if(u)return err('That nickname is already used on this device. Pick another, or log in.');
+   const salt=Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>b.toString(16).padStart(2,'0')).join('');
+   d.users[k]={nick:nk,salt,hash:await hh(pn,salt),S:{...S}};wr(d);
+  }else if(!u||await hh(pn,u.salt)!==u.hash)return err('That nickname and code do not match. Try again.');
+  login(k);
+ }catch(e){err('Something went wrong. Please try again.')}
+}
+function login(k){const u=rd().users[k];me=k;S={...DEF,...u.S};try{sessionStorage.setItem('steady-me',k)}catch(e){}applySettings();syncHdr();home()}
+function logout(){me=null;S={...DEF};try{sessionStorage.removeItem('steady-me')}catch(e){}applySettings();syncHdr();auth()}
+$('#out').onclick=logout;$('#hmb').onclick=home;
+function begin(c,s0,m0){showHome(true);cur=c;step=s0||0;answered=false;miss=m0||0;startAt=Date.now();nudgeShown=false;$('#brk').hidden=false;render();window.scrollTo(0,0)}
+function start(id){begin(SUBJECTS.find(s=>s.id===id))}
+function busy(t){showHome(true);main.innerHTML=`<div class="panel"><p>${t}</p><p class="mute">This can take about 20 seconds.</p></div>`}
+const bad=e=>e&&e.code==='not_granted'?'Claude needs your permission to make lessons. Try again and choose Allow.':'Something went wrong. Please try again.';
+function pickClass(i){
+ showHome(true);
+ const g=GR.indexOf(S.grade),s=SUBJ[i],last=(S.courses||{})[i];
+ const list=COURSES[i].filter(c=>g>=c[1]&&g<=c[2]).map(c=>c[0]);
+ main.innerHTML=`<div class="panel" style="--col:${s.col}"><h2>${L('Which {0} class are you in?',L(s.name).toLowerCase())}</h2><p class="mute">Pick the class from your schedule.</p><div class="opts">`+list.map(c=>`<button class="opt${c===last?' sel':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')+`</div><label class="mute" for="oc">Not listed? Type your class name.</label><div class="stack"><input id="oc" class="txt" maxlength="60"><button class="btn ghost" id="ocb">Use this class</button></div><div class="row"><button class="btn ghost" id="hm2">Back</button><button class="btn ghost" id="bi">Or use a built-in lesson</button></div></div>`;
+ main.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>unit(i,b.dataset.c));
+ $('#ocb').onclick=()=>{const v=$('#oc').value.trim();if(v)unit(i,v)};
+ $('#hm2').onclick=home;$('#bi').onclick=()=>offline(i);
+}
+function unit(i,course,units){
+ showHome(true);
+ S.courses=S.courses||{};S.courses[i]=course;save();const s=SUBJ[i];
+ main.innerHTML=`<div class="panel" style="--col:${s.col}"><h2>${esc(course)}</h2><p>What are you working on in class right now? Type a unit, chapter, or topic.</p><div class="stack"><input id="tp" class="txt" maxlength="100" placeholder="For example: solving two-step equations"><button class="btn" id="go">Make my lesson</button></div>`+
+ (units?`<p class="mute">Or tap a unit:</p><div class="opts">`+units.map(u=>`<button class="opt" data-u="${esc(u)}">${esc(u)}</button>`).join('')+`</div>`:`<p class="mute">Not sure what to type?</p><button class="btn ghost" id="ul">Show units for this class</button>`)+
+ `<div class="row"><button class="btn ghost" id="bk2">Change class</button></div></div><p id="err" role="alert">${msg}</p>`;msg='';
+ $('#go').onclick=()=>gen(i,course,$('#tp').value.trim());
+ $('#tp').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
+ main.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>gen(i,course,b.dataset.u));
+ $('#ul')&&($('#ul').onclick=async()=>{busy('Finding units…');const j=++job;try{const r=await AI.json(`${lp()}List 8 typical units or chapters, in teaching order, for a ${gl(S.grade)} student taking "${course}". Return ONLY JSON: {"units":["..."]}${inL()}`);if(j!==job)return;if(!Array.isArray(r.units)||!r.units.length)throw 0;unit(i,course,r.units.slice(0,10).map(String))}catch(e){if(j!==job)return;msg=bad(e);unit(i,course)}});
+ $('#bk2').onclick=()=>pickClass(i);
+}
+async function gen(i,course,topic){
+ const s=SUBJ[i],g=S.grade;busy('Making your lesson…');const j=++job;
+ try{
+  const r=await AI.json(`${lp()}Write a short lesson for a ${gl(g)} student taking "${course}" (${s.name}). ${topic?'The topic they are working on in class: "'+topic+'".':'Teach the first core topic of this class.'} The learner may have ADHD or autism: use literal, plain language, short sentences, no idioms, one idea per step, and examples that match the grade. Return ONLY JSON: {"steps":[exactly 3 objects {"t":"learn","h":"short heading","x":"2-3 short sentences"}, then exactly 3 objects {"t":"q","q":"question","o":["option","option","option"],"a":index 0-2 of the correct option,"why":"one short sentence explaining it"}]}. Vary which option is correct.${diff(i)}${inL()}`);
+  if(j!==job)return;const st=r.steps;if(!Array.isArray(st)||st.some(x=>x.t==='q'?!Array.isArray(x.o)||typeof x.a!=='number':!x.x))throw 0;
+  begin({id:course+topic,si:i,name:s.name,sub:topic||course,col:s.col,steps:st});
+ }catch(e){if(j!==job)return;msg=bad(e);unit(i,course)}
+}
+async function shrink(f){return new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)};im.onerror=rej;im.src=u})}
+async function scan(f){
+ if(!f)return;busy('Reading your homework…');const j=++job;
+ try{
+  const b=await shrink(f);
+  const r=await AI.json(`${lp()}This is a photo of a student's homework (${gl(S.grade)}). The student may have ADHD or autism, so use plain, literal language and short sentences. Help with the first problem or the single clearest task. Teach the method: do not give the answer up front. Return ONLY JSON: {"title":"short name of the task","steps":[3 to 8 objects {"h":"short action heading","x":"1-3 short sentences saying exactly what to do and why, using the numbers from the problem"}],"answer":"the final answer in one sentence"}. If the photo is unreadable or is not homework, return {"error":"a kind one-sentence explanation of what to retake"}.${inL()}`,{images:[b],cache:false});
+  if(j!==job)return;if(r.error){msg=r.error;return home()}
+  if(!Array.isArray(r.steps)||!r.steps.length)throw 0;
+  const st=r.steps.map(s=>({t:'learn',h:s.h,x:s.x}));st.push({t:'learn',h:L('Check your answer'),x:L('Try the steps on your own first. Then compare: {0}',r.answer)});
+  begin({id:'hw',name:L('Homework help'),sub:r.title||L('your homework'),col:'var(--pri)',steps:st});
+ }catch(e){if(j!==job)return;msg=bad(e);home()}
+}
+function viz(v){if(!v)return'';let h='<div class="viz" aria-hidden="true">';for(let i=0;i<v[0];i++)h+=`<span class="${i<v[1]?'f':''}"></span>`;return h+'</div>'}
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t),l=LANG.langs[LANG.cur];if(l)u.lang=l.code;speechSynthesis.speak(u)}catch(e){}}
+
+function render(){
+ const st=cur.steps[step],n=cur.steps.length;S.resume={cur,step,miss};save();qMiss=0;
+ let h=`<div class="panel" style="--col:${cur.col}"><span class="tag">${L(cur.name)}: ${esc(cur.sub)}</span>
+ <div class="bar" role="img" aria-label="${L('Step {0} of {1}',step+1,n)}">${cur.steps.map((_,i)=>`<i class="${i<step?'on':i===step?'cur':''}"></i>`).join('')}</div>`;
+ if(S.nudge&&!nudgeShown&&Date.now()-startAt>600000){h+=`<div class="nudge"><span>You've been learning for a while. A short break can help.</span><button class="btn ghost" id="nBrk">Break</button></div>`}
+ if(st.t==='learn'){
+  h+=`<h2>${st.h}</h2><p>${st.x}</p>${viz(st.viz)}<div id="altbox" aria-live="polite"></div>`;if(st.alt||useAI())h+=`<button class="btn ghost sm" id="alt" style="margin:0 8px 8px 0">Explain it another way</button>`;
+  if(S.tts)h+=`<button class="btn ghost" id="say">Read aloud</button>`;
+  h+=`<div class="row"><button class="btn ghost" id="bk" ${step?'':'disabled'}>Back</button><button class="btn" id="nx">Next</button></div>`;
+ }else{
+  h+=`<h2>${st.q}</h2><div class="opts">`+st.o.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')+`</div><div id="fb"></div>`;
+  if(S.tts)h+=`<button class="btn ghost" id="say">Read aloud</button>`;
+  h+=`<div class="row"><button class="btn ghost" id="bk">Back</button><button class="btn" id="nx" disabled>Next</button></div>`;
+ }
+ main.innerHTML=h+'</div>';
+ answered=false;
+ const nx=$('#nx'),bk=$('#bk');
+ nx.onclick=next;bk.onclick=()=>{if(step>0){step--;render()}};
+ if(st.t==='learn')bk.disabled=step===0;else bk.disabled=false;
+ $('#say')&&($('#say').onclick=()=>speak(st.t==='learn'?st.h+'. '+st.x:st.q+' '+st.o.join('. ')));
+ $('#alt')&&($('#alt').onclick=async()=>{const bx=$('#altbox'),at=step,sh=a=>bx.innerHTML=`<div class="fb ok"><b>${L('Here is another way to see it:')}</b> ${a}</div>`;
+  if(st.alt)return sh(st.alt);bx.innerHTML='<div class="fb ok">…</div>';
+  try{const r=await AI.json(`${lp()}Explain this idea a different way for a ${gl(S.grade)} student who may have ADHD or autism. Use one concrete everyday example, and a tiny picture made of emoji if it helps. 2 to 3 short sentences. Idea: "${st.h}. ${st.x}". Return ONLY JSON: {"text":"..."}`);if(at!==step)return;st.alt=String(r.text||'');sh(esc(st.alt))}catch(e){bx.innerHTML=`<div class="fb hm">Something went wrong. Please try again.</div>`}});
+ $('#nBrk')&&($('#nBrk').onclick=()=>{nudgeShown=true;takeBreak()});
+ main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b,st));
+}
+function pick(b,st){
+ if(answered)return;
+ const i=+b.dataset.i,fb=$('#fb');
+ if(i===st.a){
+  answered=true;b.classList.add('right');
+  main.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  fb.innerHTML=`<div class="fb ok"><b>Yes.</b> ${st.why}</div>`;$('#nx').disabled=false;$('#nx').focus();
+ }else{
+  b.classList.add('try');b.disabled=true;miss++;qMiss++;
+  let m='Not this one. Look again and try another answer.';
+  if(qMiss>=2){const w=[...main.querySelectorAll('.opt')].find(o=>!o.disabled&&+o.dataset.i!==st.a);if(w){w.disabled=true;w.style.opacity='.35';m="Let's make this easier. I removed one answer."}else m=`<b>${L('Here is another way to see it:')}</b> ${st.why}`}
+  fb.innerHTML=`<div class="fb hm">${m}</div>`;
+ }
+}
+function next(){
+ if(step<cur.steps.length-1){step++;render();window.scrollTo(0,0)}
+ else{S.done[cur.id]=true;save();finish()}
+}
+function finish(){
+ showHome(true);$('#brk').hidden=true;
+ let note='';const si=cur.si;
+ if(si!==undefined&&cur.steps.some(x=>x.t==='q')){S.lvl=S.lvl||{};const v=S.lvl[si]||0;
+  if(miss===0&&v<1){S.lvl[si]=v+1;note='Great accuracy. Your next lesson will be a little harder.'}
+  else if(miss>=3&&v>-1){S.lvl[si]=v-1;note='That one was tough. Your next lesson will be a little easier. You can also do it again.'}}
+ const k=(S.plan||[]).find(x=>!x.d&&x.t===si);if(k)k.d=true;
+ delete S.resume;save();
+ main.innerHTML=`<div class="panel"><div class="big" aria-hidden="true">✓</div><h2>Lesson finished</h2><p>${L("You worked through {0} steps of {1}. That's real progress.",cur.steps.length,esc(cur.sub.toLowerCase()))}</p>${note?`<div class="fb ok">${note}</div>`:''}<div class="row"><button class="btn ghost" id="again">Do it again</button><button class="btn" id="hm">Choose another subject</button></div></div>`;
+ $('#again').onclick=()=>begin(cur);$('#hm').onclick=home;
+}
+function takeBreak(){$('#breakScr').classList.add('show');$('#backBtn').focus()}
+$('#brk').onclick=takeBreak;
+$('#backBtn').onclick=()=>{$('#breakScr').classList.remove('show');startAt=Date.now();if(cur)render()};
+$('#title').tabIndex=-1;$('#title').style.cursor='pointer';$('#title').onclick=home;
+try{const k=sessionStorage.getItem('steady-me'),u=(rd().users||{})[k];if(u){me=k;S={...DEF,...u.S}}}catch(e){}
+applySettings();syncHdr();applyLang();home();
+</script>
+</body>
+</html>
